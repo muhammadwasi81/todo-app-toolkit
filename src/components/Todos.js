@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { addTodos } from '../redux/reducer';
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { addTodos } from "../redux/reducer";
+import { GoPlus } from "react-icons/go";
+import { motion } from "framer-motion";
 
 const mapStateToProps = (state) => {
   return {
@@ -10,30 +12,30 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addTodo: (todo) => dispatch(addTodos(todo)),
+    addTodo: (obj) => dispatch(addTodos(obj)),
   };
 };
 
 const Todos = (props) => {
-  const [todo, setTodo] = useState('');
+  const [todo, setTodo] = useState("");
 
-  const addTodoHandler = () => {
-    if (!todo) {
-      alert(`Please enter a todo`);
+  const handleChange = (e) => {
+    setTodo(e.target.value);
+  };
+
+  const add = () => {
+    if (todo === "") {
+      alert("Input is Empty");
     } else {
       props.addTodo({
         id: Math.floor(Math.random() * 1000),
         item: todo,
         completed: false,
       });
-      setTodo('');
+      setTodo("");
     }
   };
-
-  const handleChange = (e) => {
-    setTodo(e.target.value);
-  };
-
+  //console.log("props from store", props);
   return (
     <div className="addTodos">
       <input
@@ -42,13 +44,18 @@ const Todos = (props) => {
         className="todo-input"
         value={todo}
       />
-      <button className="add-btn" onClick={() => addTodoHandler()}>
-        Add
-      </button>
+
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="add-btn"
+        onClick={() => add()}
+      >
+        <GoPlus />
+      </motion.button>
       <br />
     </div>
   );
 };
-
-// we used connect method to connect this component with redux store
+//we can use connect method to connect this component with redux store
 export default connect(mapStateToProps, mapDispatchToProps)(Todos);

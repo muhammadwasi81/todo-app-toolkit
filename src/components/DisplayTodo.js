@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import TodoItem from './TodoItem';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import {
   addTodos,
+  completeTodos,
   removeTodos,
   updateTodos,
-  completedTodos,
 } from '../redux/reducer';
-import { connect } from 'react-redux';
+import TodoItem from './TodoItem';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const mapStateToProps = (state) => {
   return {
@@ -17,24 +18,42 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     addTodo: (obj) => dispatch(addTodos(obj)),
-    completeTodo: (obj) => dispatch(completedTodos(obj)),
-    removeTodo: (obj) => dispatch(removeTodos(obj)),
+    removeTodo: (id) => dispatch(removeTodos(id)),
     updateTodo: (obj) => dispatch(updateTodos(obj)),
+    completeTodo: (id) => dispatch(completeTodos(id)),
   };
 };
 
-const DisplayTodo = (props) => {
+const DisplayTodos = (props) => {
   const [sort, setSort] = useState('active');
   return (
-    <>
-      <div className="displayTodos">
-        <div className="buttons">
-          <button onClick={() => setSort('active')}>Active</button>
-          <button onClick={() => setSort('completed')}>Completed</button>
-          <button onClick={() => setSort('all')}>All</button>
-        </div>
-        <ul>
-          {props.todos?.length > 0 && sort === 'active'
+    <div className="displaytodos">
+      <div className="buttons">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setSort('active')}
+        >
+          Active
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setSort('completed')}
+        >
+          Completed
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setSort('all')}
+        >
+          All
+        </motion.button>
+      </div>
+      <ul>
+        <AnimatePresence>
+          {props.todos.length > 0 && sort === 'active'
             ? props.todos.map((item) => {
                 return (
                   item.completed === false && (
@@ -50,7 +69,7 @@ const DisplayTodo = (props) => {
               })
             : null}
           {/* for completed items */}
-          {props.todos?.length > 0 && sort === 'completed'
+          {props.todos.length > 0 && sort === 'completed'
             ? props.todos.map((item) => {
                 return (
                   item.completed === true && (
@@ -66,7 +85,7 @@ const DisplayTodo = (props) => {
               })
             : null}
           {/* for all items */}
-          {props.todos?.length > 0 && sort === 'all'
+          {props.todos.length > 0 && sort === 'all'
             ? props.todos.map((item) => {
                 return (
                   <TodoItem
@@ -79,10 +98,10 @@ const DisplayTodo = (props) => {
                 );
               })
             : null}
-        </ul>
-      </div>
-    </>
+        </AnimatePresence>
+      </ul>
+    </div>
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DisplayTodo);
+export default connect(mapStateToProps, mapDispatchToProps)(DisplayTodos);
